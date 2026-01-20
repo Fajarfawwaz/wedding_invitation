@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Wedding of Fajar & Indi</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=Great+Vibes&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --gold: #c5a059;
+            --dark: #121212;
+            --cream: #fdfaf5;
+            --white: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--cream); color: var(--dark); overflow-x: hidden; }
+        body.locked { overflow: hidden; }
+
+        /* --- LOADING --- */
+        #preloader { position: fixed; inset: 0; background: var(--dark); z-index: 99999; display: flex; align-items: center; justify-content: center; transition: 0.8s; }
+        #preloader.hidden { opacity: 0; visibility: hidden; }
+
+        /* --- COVER --- */
+        #cover-screen {
+            position: fixed; inset: 0; background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('img/moment1.jpeg') center/cover;
+            z-index: 9999; display: flex; align-items: center; justify-content: center; color: white; text-align: center;
+            transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+        #cover-screen.closed { transform: translateY(-100%); }
+        .cover-box { padding: 50px 30px; border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(10px); border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+
+        /* --- NAVIGATION --- */
+        .navbar { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); z-index: 1000; background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); padding: 12px 30px; border-radius: 50px; display: flex; gap: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); opacity: 0; transition: 0.5s; }
+        .navbar.visible { opacity: 1; }
+        .navbar a { color: var(--dark); font-size: 1.3rem; transition: 0.3s; }
+        .navbar a:hover { color: var(--gold); transform: scale(1.2); }
+
+        /* --- TYPOGRAPHY --- */
+        .gv { font-family: 'Great Vibes', cursive; }
+        .cg { font-family: 'Cormorant Garamond', serif; }
+        .title-gold { color: var(--gold); font-size: 4rem; margin-bottom: 10px; }
+
+        /* --- SECTIONS --- */
+        .section-padding { padding: 100px 5%; max-width: 1200px; margin: auto; text-align: center; }
+
+        /* --- MEMPELAI STYLING --- */
+        .couple-container { display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: wrap; margin-top: 50px; }
+        .mempelai-card { flex: 1; min-width: 300px; }
+        .img-frame {
+            width: 280px; height: 380px; margin: 0 auto 25px;
+            border: 8px solid var(--white); outline: 1px solid var(--gold);
+            border-radius: 150px 150px 0 0; overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .img-frame img { width: 100%; height: 100%; object-fit: cover; transition: 1s; }
+        .img-frame:hover img { transform: scale(1.1); }
+
+        /* --- COUNTDOWN --- */
+        .timer-wrap { display: flex; justify-content: center; gap: 15px; margin-top: 30px; }
+        .timer-item { background: var(--white); padding: 15px; border-radius: 10px; min-width: 80px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .timer-item h2 { color: var(--gold); font-size: 2rem; }
+
+        /* --- EVENT CARD --- */
+        .event-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-top: 50px; }
+        .event-card { background: var(--white); padding: 50px 30px; border-radius: 30px 0 30px 0; border: 1px solid var(--gold); transition: 0.4s; }
+        .event-card:hover { background: var(--dark); color: white; }
+        .btn-map { display: inline-block; margin-top: 25px; padding: 12px 30px; border: 1px solid var(--gold); color: var(--gold); text-decoration: none; border-radius: 50px; font-weight: 600; transition: 0.3s; }
+        .event-card:hover .btn-map { background: var(--gold); color: white; border-color: var(--gold); }
+
+        /* --- GALLERY --- */
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; margin-top: 40px; }
+        .gallery-img { width: 100%; height: 300px; object-fit: cover; border-radius: 15px; filter: grayscale(30%); transition: 0.5s; cursor: pointer; }
+        .gallery-img:hover { filter: grayscale(0); transform: translateY(-5px); }
+
+        /* --- MUSIC CTRL --- */
+        .music-btn { position: fixed; top: 25px; right: 25px; z-index: 10000; background: var(--white); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+
+        @media (max-width: 768px) {
+            .title-gold { font-size: 3rem; }
+            .img-frame { width: 220px; height: 320px; }
+        }
+    </style>
+</head>
+<body class="locked">
+
+    <div id="preloader"><h2 class="gv" style="color: var(--gold); font-size: 2rem;">Loading...</h2></div>
+
+    <div id="cover-screen">
+        <div class="cover-box" data-aos="fade-up">
+            <h3 style="letter-spacing: 5px; font-weight: 300;">THE WEDDING OF</h3>
+            <h1 class="gv" style="font-size: 4.5rem; margin: 20px 0; color: var(--gold);">Fajar & Indi</h1>
+            <p style="margin-bottom: 10px; opacity: 0.8;">Special Invitation To:</p>
+            <h2 id="guest-name" style="margin-bottom: 30px; letter-spacing: 2px;">Tamu Undangan</h2>
+            <button onclick="unlock()" style="padding: 15px 40px; border-radius: 50px; border: none; background: var(--gold); color: white; cursor: pointer; font-weight: 600; letter-spacing: 2px;">BUKA UNDANGAN</button>
+        </div>
+    </div>
+
+    <div class="music-btn" onclick="togglePlay()">
+        <i class="fas fa-music" id="music-icon"></i>
+    </div>
+    <audio id="audio" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
+    </audio>
+
+    <nav class="navbar" id="navbar">
+        <a href="#home"><i class="fas fa-home"></i></a>
+        <a href="#couple"><i class="fas fa-heart"></i></a>
+        <a href="#event"><i class="fas fa-calendar-alt"></i></a>
+        <a href="#gallery"><i class="fas fa-image"></i></a>
+    </nav>
+
+    <section id="home" style="height: 100vh; background: url('img/moment1.jpeg') center/cover; display: flex; align-items: center; justify-content: center; text-align: center; color: white;">
+        <div style="background: rgba(0,0,0,0.4); padding: 50px; border-radius: 20px; width: 90%; max-width: 600px;" data-aos="zoom-out">
+            <h1 class="gv" style="font-size: 6rem; color: var(--gold);">Fajar & Indi</h1>
+            <p style="letter-spacing: 10px; font-size: 1.2rem;">20 DECEMBER 2026</p>
+            
+            <div class="timer-wrap cg">
+                <div class="timer-item"><h2 id="days">00</h2><p>Hari</p></div>
+                <div class="timer-item"><h2 id="hours">00</h2><p>Jam</p></div>
+                <div class="timer-item"><h2 id="mins">00</h2><p>Menit</p></div>
+                <div class="timer-item"><h2 id="secs">00</h2><p>Detik</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding" id="couple">
+        <h2 class="gv title-gold" data-aos="fade-up">Mempelai</h2>
+        <p style="font-style: italic; color: #777; margin-bottom: 40px;" data-aos="fade-up">"Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu isteri-isteri dari jenismu sendiri, supaya kamu cenderung dan merasa tenteram kepadanya."</p>
+        
+        <div class="couple-container">
+            <div class="mempelai-card" data-aos="fade-right">
+                <div class="img-frame">
+                    <img src="img/fajar fawwaz atallah.jpeg" alt="Fajar">
+                </div>
+                <h2 class="cg" style="font-size: 2.5rem; color: var(--gold);">Fajar Fawwaz Atallah</h2>
+                <p style="margin-top: 10px;">Putra dari <strong>Bpk. Fulan</strong> & <strong>Ibu Fulana</strong></p>
+            </div>
+
+            <div class="gv" style="font-size: 4rem; color: var(--gold);" data-aos="zoom-in">&</div>
+
+            <div class="mempelai-card" data-aos="fade-left">
+                <div class="img-frame">
+                    <img src="img/indi desy sriastuti.jpeg" alt="Indi">
+                </div>
+                <h2 class="cg" style="font-size: 2.5rem; color: var(--gold);">Indi Desy Sriastuti</h2>
+                <p style="margin-top: 10px;">Putri dari <strong>Bpk. Polan</strong> & <strong>Ibu Polana</strong></p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding" id="event" style="background: #f4f1ea;">
+        <h2 class="gv title-gold" data-aos="fade-up">Acara Bahagia</h2>
+        <div class="event-grid">
+            <div class="event-card" data-aos="flip-left">
+                <i class="fas fa-ring" style="font-size: 2rem; color: var(--gold);"></i>
+                <h2 class="cg" style="margin: 20px 0; letter-spacing: 3px;">AKAD NIKAH</h2>
+                <p><strong>Minggu, 20 Desember 2026</strong></p>
+                <p>08.00 - 10.00 WIB</p>
+                <p style="margin-top: 15px;">Masjid Istiqlal, Jakarta Pusat</p>
+                <a href="https://www.google.com/maps/search/?api=1&query=Masjid+Istiqlal+Jakarta" target="_blank" class="btn-map">LIHAT GOOGLE MAPS</a>
+            </div>
+            <div class="event-card" data-aos="flip-right">
+                <i class="fas fa-glass-cheers" style="font-size: 2rem; color: var(--gold);"></i>
+                <h2 class="cg" style="margin: 20px 0; letter-spacing: 3px;">RESEPSI</h2>
+                <p><strong>Minggu, 20 Desember 2026</strong></p>
+                <p>11.00 - Selesai</p>
+                <p style="margin-top: 15px;">Hotel Mulia Senayan, Jakarta</p>
+                <a href="https://www.google.com/maps/search/?api=1&query=Hotel+Mulia+Senayan+Jakarta" target="_blank" class="btn-map">LIHAT GOOGLE MAPS</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding" id="gallery">
+        <h2 class="gv title-gold" data-aos="fade-up">Galeri</h2>
+        <div class="gallery-grid">
+            <img src="img/moment1.jpeg" class="gallery-img" data-aos="zoom-in">
+            <img src="img/moment2.jpeg" class="gallery-img" data-aos="zoom-in" data-aos-delay="100">
+            <img src="img/moment3.jpeg" class="gallery-img" data-aos="zoom-in" data-aos-delay="200">
+            <img src="img/moment4.jpeg" class="gallery-img" data-aos="zoom-in" data-aos-delay="300">
+        </div>
+    </section>
+
+    <footer style="padding: 60px; background: var(--dark); color: white; text-align: center;">
+        <h1 class="gv" style="color: var(--gold); font-size: 3rem;">Fajar & Indi</h1>
+        <p style="opacity: 0.5; font-size: 0.8rem; margin-top: 20px; letter-spacing: 2px;">SAYING I DO IN 2026</p>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1000, once: true });
+
+        // Hide Preloader
+        window.onload = () => { document.getElementById('preloader').classList.add('hidden'); };
+
+        // Guest Name logic
+        const urlParams = new URLSearchParams(window.location.search);
+        const to = urlParams.get('to');
+        if(to) document.getElementById('guest-name').innerText = to;
+
+        // Music Logic
+        const audio = document.getElementById('audio');
+        let playing = false;
+
+        function unlock() {
+            document.getElementById('cover-screen').classList.add('closed');
+            document.body.classList.remove('locked');
+            document.getElementById('navbar').classList.add('visible');
+            if(!playing) togglePlay();
+        }
+
+        function togglePlay() {
+            const icon = document.getElementById('music-icon');
+            if(!playing) { 
+                audio.play(); 
+                icon.classList.add('fa-spin'); 
+            } else { 
+                audio.pause(); 
+                icon.classList.remove('fa-spin'); 
+            }
+            playing = !playing;
+        }
+
+        // Countdown logic
+        const targetDate = new Date("Dec 20, 2026 08:00:00").getTime();
+        setInterval(() => {
+            const now = new Date().getTime();
+            const diff = targetDate - now;
+            document.getElementById('days').innerText = Math.floor(diff / (1000 * 60 * 60 * 24));
+            document.getElementById('hours').innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            document.getElementById('mins').innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            document.getElementById('secs').innerText = Math.floor((diff % (1000 * 60)) / 1000);
+        }, 1000);
+    </script>
+</body>
+</html>
